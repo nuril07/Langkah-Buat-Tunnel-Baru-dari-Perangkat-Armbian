@@ -1,0 +1,31 @@
+1. jalankan perintah di terminal armbian
+  - cloudflared tunnel login  #Ini akan membuka URL di browser untuk autentikasi akun Cloudflare dan memilih zone/domain.
+-------------------------------------------------------------------------------------------------------------------------------
+2. Creat Tunnel
+  - cloudflared tunnel create "nama-panel" #tanpa tanda kutip
+Perintah ini akan:
+Menghasilkan file .json di ~/.cloudflared/
+Mendaftarkan tunnel "nama-panel" di dashboard
+Menyediakan token dan Tunnel ID
+--------------------------------------------------------------------------------------------------------------------------------
+3. Buat config.yml (jika belum)
+- sudo mkdir -p /etc/cloudflared
+- sudo nano /etc/cloudflared/config.yml
+isi .yml
+tunnel: <TUNNEL_ID>
+credentials-file: /etc/cloudflared/<TUNNEL_ID>.json
+
+ingress:
+  - hostname: <subdomain.kamu.com>
+    service: http://localhost:8000
+  - service: http_status:404
+
+no-autoupdate: true
+protocol: http2
+
+Salin file .json yang dihasilkan:
+- sudo cp ~/.cloudflared/*.json /etc/cloudflared/
+-------------------------------------------------------------------------------------------------------------------------------
+4. Jalankan Tunnel dengan perintah 
+- sudo cloudflared tunnel run
+Kalau sukses, tunnel akan muncul sebagai "HEALTHY" di dashboard dan bisa langsung dipakai.
